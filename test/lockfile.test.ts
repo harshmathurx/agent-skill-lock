@@ -57,6 +57,16 @@ describe('lockfile generation', () => {
     expect(text).toContain('token=%3Credacted%3E');
   });
 
+  it('does not crash on malformed MCP JSON', async () => {
+    const root = await tempRepo('agent-lock-malformed-mcp');
+    await writeFile(path.join(root, '.mcp.json'), '{ not json');
+
+    const lockfile = await scanRepository({ root });
+
+    expect(lockfile.entries[0]?.kind).toBe('unparsedConfig');
+    expect(stableStringify(lockfile)).toContain('UNPARSED_CONFIG');
+  });
+
   it('detects stale lockfiles after capability drift', async () => {
     const root = await tempRepo('agent-lock-drift');
     await writeFile(path.join(root, 'AGENTS.md'), 'Use pnpm.');

@@ -15,4 +15,6 @@ runs:
   steps:
     - name: Check agent capability lock
       shell: bash
-      run: node "$GITHUB_ACTION_PATH/dist/cli.js" check --root "${{ inputs.root }}"
+      env:
+        AGENT_SKILL_LOCK_ROOT: ${{ inputs.root }}
+      run: node "$GITHUB_ACTION_PATH/dist/cli.js" check --root "$AGENT_SKILL_LOCK_ROOT"
