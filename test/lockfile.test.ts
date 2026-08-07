@@ -107,13 +107,17 @@ describe('lockfile generation', () => {
     const workspace = await tempRepo('agent-lock-workspace');
     const outside = await tempRepo('agent-lock-outside');
     await writeFile(path.join(outside, 'AGENTS.md'), 'Use pnpm.');
-    const previous = process.env.GITHUB_WORKSPACE;
+    const previousWorkspace = process.env.GITHUB_WORKSPACE;
+    const previousEnforce = process.env.AGENT_SKILL_LOCK_ENFORCE_WORKSPACE;
     process.env.GITHUB_WORKSPACE = workspace;
+    process.env.AGENT_SKILL_LOCK_ENFORCE_WORKSPACE = '1';
     try {
       await expect(scanRepository({ root: outside })).rejects.toThrow('Refusing to scan outside GITHUB_WORKSPACE');
     } finally {
-      if (previous === undefined) delete process.env.GITHUB_WORKSPACE;
-      else process.env.GITHUB_WORKSPACE = previous;
+      if (previousWorkspace === undefined) delete process.env.GITHUB_WORKSPACE;
+      else process.env.GITHUB_WORKSPACE = previousWorkspace;
+      if (previousEnforce === undefined) delete process.env.AGENT_SKILL_LOCK_ENFORCE_WORKSPACE;
+      else process.env.AGENT_SKILL_LOCK_ENFORCE_WORKSPACE = previousEnforce;
     }
   });
 });

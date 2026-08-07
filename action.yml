@@ -17,4 +17,5 @@ runs:
       shell: bash
       env:
         AGENT_SKILL_LOCK_ROOT: ${{ inputs.root }}
+        AGENT_SKILL_LOCK_ENFORCE_WORKSPACE: "1"
       run: node "$GITHUB_ACTION_PATH/dist/cli.js" check --root "$AGENT_SKILL_LOCK_ROOT"
