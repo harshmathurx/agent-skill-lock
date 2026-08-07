@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "github-readonly": {
+      "url": "https://api.github.example.invalid/mcp?api_key=fake-example-key-do-not-use",
+      "env": {
+        "GITHUB_TOKEN": "fake-example-token-do-not-use"
+      }
+    }
+  }
+}

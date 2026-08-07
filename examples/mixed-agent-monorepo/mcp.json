@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "repo-files": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "docs-fetch": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://docs.example.invalid/mcp?token=fake-example-token-do-not-use"]
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "entries": [
+    {
+      "capabilities": [],
+      "contentHash": "sha256:6962fa231ff07fbfc556948023087451114ce0be97765165911a6d5a22ac489b",
+      "id": "instructionfile:generic:.codex/instructions.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 182
+      },
+      "name": ".codex/instructions.md",
+      "path": ".codex/instructions.md",
+      "platform": "generic",
+      "riskHints": [
+        {
+          "code": "FILESYSTEM_WRITE",
+          "level": "medium",
+          "message": "Instruction references filesystem mutation."
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "contentHash": "sha256:551177dfe7799f0f270dba73b092e492771b9e330237e5170a0365e41e73a2cf",
+      "id": "instructionfile:generic:agents.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 216
+      },
+      "name": "AGENTS.md",
+      "path": "AGENTS.md",
+      "platform": "generic",
+      "riskHints": [
+        {
+          "code": "FILESYSTEM_WRITE",
+          "level": "medium",
+          "message": "Instruction references filesystem mutation."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "npx",
+          "source": "mcp.command",
+          "type": "command"
+        },
+        {
+          "name": "DATABASE_URL",
+          "source": "mcp.env",
+          "type": "env"
+        },
+        {
+          "name": "READONLY_REPORTING_TOKEN",
+          "source": "mcp.env",
+          "type": "env"
+        }
+      ],
+      "contentHash": "sha256:23233959e19dd8449c3645513f4997f7c92d0c654d98b89b49c013622304896d",
+      "id": "mcpserver:mcp:readonly-postgres",
+      "kind": "mcpServer",
+      "metadata": {
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-postgres",
+          "--readonly",
+          "--token",
+          "<redacted>"
+        ],
+        "command": "npx",
+        "disabled": false,
+        "envNames": [
+          "DATABASE_URL",
+          "READONLY_REPORTING_TOKEN"
+        ],
+        "url": null
+      },
+      "name": "readonly-postgres",
+      "path": ".mcp.json",
+      "platform": "mcp",
+      "riskHints": [
+        {
+          "code": "SECRET_ENV_REFERENCE",
+          "level": "medium",
+          "message": "MCP server references secret-looking environment variable names. Values are redacted."
+        },
+        {
+          "code": "UNPINNED_REMOTE_EXEC",
+          "level": "high",
+          "message": "Configuration may execute an unpinned remote package or script."
+        }
+      ]
+    }
+  ],
+  "generatedBy": "agent-skill-lock@0.1.0",
+  "lockfileVersion": 1,
+  "root": "."
+}

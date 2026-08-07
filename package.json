@@ -17,7 +17,7 @@
     }
   },
   "sideEffects": false,
-  "files": ["dist", "action.yml", "README.md", "LICENSE"],
+  "files": ["dist", "docs", "examples", "action.yml", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",

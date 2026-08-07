@@ -67,6 +67,25 @@ describe('lockfile generation', () => {
     expect(stableStringify(lockfile)).toContain('UNPARSED_CONFIG');
   });
 
+  it('redacts secret-looking MCP args', async () => {
+    const root = await tempRepo('agent-lock-mcp-args');
+    await writeFile(path.join(root, '.mcp.json'), JSON.stringify({
+      mcpServers: {
+        reporting: {
+          command: 'npx',
+          args: ['-y', 'mcp-remote', '--token', 'fake-token-value', '--api-key=fake-key-value']
+        }
+      }
+    }));
+
+    const text = stableStringify(await scanRepository({ root }));
+
+    expect(text).toContain('--token');
+    expect(text).toContain('--api-key=<redacted>');
+    expect(text).not.toContain('fake-token-value');
+    expect(text).not.toContain('fake-key-value');
+  });
+
   it('detects stale lockfiles after capability drift', async () => {
     const root = await tempRepo('agent-lock-drift');
     await writeFile(path.join(root, 'AGENTS.md'), 'Use pnpm.');
@@ -82,5 +101,19 @@ describe('lockfile generation', () => {
     expect(diff.added.map((entry) => entry.id)).toContain('mcpserver:mcp:fs');
     expect(diff.isClean).toBe(false);
     expect(await readFile(path.join(root, 'agent-skills.lock.json'), 'utf8')).toContain('AGENTS.md');
+  });
+
+  it('rejects GitHub Action roots outside the workspace', async () => {
+    const workspace = await tempRepo('agent-lock-workspace');
+    const outside = await tempRepo('agent-lock-outside');
+    await writeFile(path.join(outside, 'AGENTS.md'), 'Use pnpm.');
+    const previous = process.env.GITHUB_WORKSPACE;
+    process.env.GITHUB_WORKSPACE = workspace;
+    try {
+      await expect(scanRepository({ root: outside })).rejects.toThrow('Refusing to scan outside GITHUB_WORKSPACE');
+    } finally {
+      if (previous === undefined) delete process.env.GITHUB_WORKSPACE;
+      else process.env.GITHUB_WORKSPACE = previous;
+    }
   });
 });

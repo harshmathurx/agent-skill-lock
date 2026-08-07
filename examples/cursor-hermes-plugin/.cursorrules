@@ -1,0 +1,3 @@
+Use TypeScript. Prefer small changes. Never rewrite public README copy without a maintainer review.
+
+Cursor may inspect local files and suggest docs edits, but it must not publish packages or push tags.

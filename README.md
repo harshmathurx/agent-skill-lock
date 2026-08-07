@@ -1,17 +1,45 @@
 # agent-skill-lock
 
-A repo-local lockfile for coding-agent skills, MCP servers, and tool permissions.
+Detect agent capability drift before it lands in `main`.
 
-Agent tools now load instructions, skills, servers, and permission surfaces from files in your repository. Those files change what an agent can do. `agent-skill-lock` makes that surface reviewable in git.
+Modern coding agents do not just read source code. They load repo instructions, local skills, MCP servers, shell permissions, Cursor rules, Codex guidance, and whatever else a team has quietly taught them. Those files can change what an agent is allowed to do.
 
-It scans common agent configuration paths, writes `agent-skills.lock.json`, and fails CI when the current agent surface does not match the committed lockfile.
+`agent-skill-lock` turns that surface into a lockfile.
 
 ```bash
-npx agent-skill-lock update
-npx agent-skill-lock check
+pnpm install
+pnpm build
+node dist/cli.js update
+node dist/cli.js check
 ```
 
-`agent-skill-lock` detects drift. It does not certify that a locked skill or server is safe.
+It scans common agent config paths, writes `agent-skills.lock.json`, and fails CI when the repo's current agent surface no longer matches the committed lockfile.
+
+That is the whole trick. Capability drift belongs in code review.
+
+## What this is
+
+A small CLI and GitHub Action for repositories that use coding agents.
+
+It helps reviewers answer one boring but useful question:
+
+> Did this PR change what our agents can read, run, call, or publish?
+
+It works with the files teams already have in git. You do not need a hosted dashboard, a central registry, or a new agent runtime.
+
+## What this is not
+
+`agent-skill-lock` does not make an agent safe.
+
+It is not:
+
+- a sandbox
+- an authorization system
+- a malware scanner
+- a prompt injection detector
+- proof that a skill or MCP server is trustworthy
+
+A locked dangerous skill is still dangerous. The lockfile only makes the change visible.
 
 ## What it watches
 
@@ -24,85 +52,25 @@ npx agent-skill-lock check
 | MCP | `.mcp.json`, `mcp.json`, `.cursor/mcp.json`, `.claude/mcp*.json` |
 | Other agent docs | `.windsurfrules`, `.aider.conf.yml` |
 
-The scanner records stable metadata: entry IDs, paths, content hashes, extracted commands/env names, MCP server definitions, capabilities, and risk hints.
+The lockfile records stable metadata: entry IDs, paths, content hashes, MCP server commands, environment variable names, tool-like capabilities, and review hints.
 
-It intentionally does not store secret values or absolute machine paths.
+It does not write secret values or absolute machine paths into the lockfile.
 
-## Why this exists
+## Quick start
 
-Security scanners ask whether a skill looks malicious. That is useful, but it is not the first boundary most teams need.
-
-The first boundary is simpler:
-
-> Did the agent gain a new instruction, server, command surface, environment binding, or permission in this repo, and did the diff show it?
-
-Teams already review dependency lockfiles. Agent capability needs the same habit.
-
-## Install
-
-Use without installing:
+The repo is not published to npm yet. For now, run it from source:
 
 ```bash
-npx agent-skill-lock scan
-npx agent-skill-lock update
-npx agent-skill-lock check
+git clone https://github.com/harshmathurx/agent-skill-lock.git
+cd agent-skill-lock
+pnpm install
+pnpm build
+node dist/cli.js update --root path/to/your/repo
+git -C path/to/your/repo add agent-skills.lock.json
+git -C path/to/your/repo commit -m "chore: lock agent capabilities"
 ```
 
-Or add it as a dev dependency:
-
-```bash
-pnpm add -D agent-skill-lock
-pnpm agent-skill-lock update
-```
-
-## Commands
-
-### `scan`
-
-Print the current agent capability manifest without writing a lockfile.
-
-```bash
-agent-skill-lock scan
-agent-skill-lock scan --root path/to/repo
-```
-
-### `update`
-
-Write `agent-skills.lock.json` for the current repository state.
-
-```bash
-agent-skill-lock update
-```
-
-Commit the lockfile with the agent configuration change.
-
-### `check`
-
-Compare the committed lockfile with the current repository state.
-
-```bash
-agent-skill-lock check
-```
-
-If the lockfile is stale, the command exits `1` and prints the added, removed, or changed entries.
-
-### `diff`
-
-Print the lockfile drift as JSON for downstream tools.
-
-```bash
-agent-skill-lock diff
-```
-
-### `explain`
-
-Explain one lockfile entry.
-
-```bash
-agent-skill-lock explain mcpserver:mcp:filesystem
-```
-
-## GitHub Actions
+After the first tagged release, the GitHub Action will look like this:
 
 ```yaml
 name: agent-skill-lock
@@ -118,12 +86,64 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: harshmathurx/agent-skill-lock@v0
+      - uses: harshmathurx/agent-skill-lock@v0.1.0
 ```
 
-The Action only needs read access. It does not comment on PRs, write files, upload artifacts, or call an external service.
+When a PR edits `.mcp.json`, `AGENTS.md`, `.claude/**`, `.cursor/**`, or `.hermes/skills/**`, CI should fail until the lockfile is updated in the same PR.
 
-## Example stale-lock output
+That failure is intentional. It gives the reviewer a clean diff of the agent surface change.
+
+## Commands
+
+### `scan`
+
+Print the current agent surface without touching the lockfile.
+
+```bash
+agent-skill-lock scan
+agent-skill-lock scan --root path/to/repo
+```
+
+### `update`
+
+Write `agent-skills.lock.json` for the current repo state.
+
+```bash
+agent-skill-lock update
+```
+
+Commit the lockfile with the agent config change that caused it.
+
+### `check`
+
+Compare the committed lockfile with the current repo state.
+
+```bash
+agent-skill-lock check
+```
+
+Exit codes:
+
+- `0`: lockfile is current
+- `1`: lockfile is missing or stale
+
+### `diff`
+
+Print the drift as JSON.
+
+```bash
+agent-skill-lock diff
+```
+
+### `explain`
+
+Show the entry a reviewer should inspect.
+
+```bash
+agent-skill-lock explain mcpserver:mcp:filesystem
+```
+
+## Example failure
 
 ```text
 Agent capability lock is stale.
@@ -147,6 +167,19 @@ Fix:
 
 Note: this detects drift. It does not certify that a locked skill or server is safe.
 ```
+
+## Real examples
+
+The `examples/` directory contains four small repos with initialized lockfiles:
+
+- `examples/claude-mcp-webapp`: Claude Code instructions plus filesystem and Playwright MCP servers.
+- `examples/codex-data-worker`: Codex guidance for a data job with a Postgres MCP server.
+- `examples/cursor-hermes-plugin`: Cursor rules plus a Hermes release skill.
+- `examples/mixed-agent-monorepo`: a mixed team repo with Claude, Codex, Cursor, Hermes, and MCP surfaces.
+
+Each example has a README, agent config files, and a committed `agent-skills.lock.json`. They are deliberately small so the lockfile diff is readable.
+
+Read the walkthrough: [docs/examples.md](docs/examples.md).
 
 ## Lockfile shape
 
@@ -186,43 +219,39 @@ Note: this detects drift. It does not certify that a locked skill or server is s
 }
 ```
 
-## Risk hints
+## Review hints
 
-Risk hints are review prompts, not vulnerability findings.
+Review hints are not findings. They are reminders to slow down.
 
-Current hints include:
+Current hints cover:
 
-- shell/process execution
+- shell or process execution
 - network access
 - filesystem mutation
-- public or external side effects
+- public side effects such as publish, deploy, merge, post, or comment
 - secret-looking environment variable names
-- repository/home filesystem MCP scopes
+- repository or home directory MCP scopes
 - unpinned remote execution patterns such as `npx -y` and `curl | sh`
 
-If no hints appear, that is not a security guarantee.
-
-## Non-goals
-
-- Not a sandbox.
-- Not an authorization layer.
-- Not a generic prompt-injection scanner.
-- Not a central skill registry.
-- Not a hosted dashboard.
-- Not proof that a locked agent configuration is safe.
+If no hints appear, the config may still be risky. The tool is not trying to be clever enough to replace a reviewer.
 
 ## Development
 
 ```bash
 pnpm install
-pnpm test
-pnpm typecheck
-pnpm lint
-pnpm build
+pnpm check
 ```
 
-The project uses strict TypeScript and Vitest. New parser behavior should start with a fixture or focused test that fails before implementation.
+The project uses strict TypeScript and Vitest. Parser changes should start with a fixture or focused test.
+
+## Docs
+
+- [Examples](docs/examples.md)
+- [Threat model](docs/threat-model.md)
+- [Release process](docs/release.md)
+- [Positioning](docs/positioning.md)
+- [Roadmap](docs/roadmap.md)
 
 ## Status
 
-Early v0. The core lockfile flow works, but parser coverage is intentionally narrow. Expect adapters to improve as real repositories expose edge cases.
+Early v0. The lockfile workflow works. Parser coverage is intentionally narrow and will expand as real repos expose edge cases.

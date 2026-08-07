@@ -1,7 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import fg from 'fast-glob';
+import { resolveRoot } from './root.js';
 import { parseFile } from './adapters.js';
+import { compareStrings } from './stable.js';
 import { sha256Bytes } from './hash.js';
 const VERSION = '0.1.0';
 export const DEFAULT_PATTERNS = [
@@ -18,7 +20,7 @@ export const DEFAULT_PATTERNS = [
     'mcp.json',
 ];
 export async function scanRepository(options) {
-    const root = path.resolve(options.root);
+    const root = resolveRoot(options.root);
     const matches = await fg(DEFAULT_PATTERNS, {
         cwd: root,
         dot: true,
@@ -27,16 +29,27 @@ export async function scanRepository(options) {
         ignore: ['.git/**', 'node_modules/**', 'dist/**', 'coverage/**', '**/*.log'],
     });
     const entries = [];
-    for (const relativePath of matches.sort()) {
+    for (const relativePath of matches.sort(compareStrings)) {
         const bytes = await readFile(path.join(root, relativePath));
         const file = { relativePath: relativePath.replace(/\\/g, '/'), bytes, contentHash: sha256Bytes(bytes) };
         entries.push(...parseFile(file));
     }
+    const sortedEntries = entries.sort((a, b) => compareStrings(a.id, b.id) || compareStrings(a.path, b.path));
+    assertUniqueEntryIds(sortedEntries);
     return {
         lockfileVersion: 1,
         generatedBy: `agent-skill-lock@${VERSION}`,
         root: '.',
-        entries: entries.sort((a, b) => a.id.localeCompare(b.id) || a.path.localeCompare(b.path)),
+        entries: sortedEntries,
     };
+}
+function assertUniqueEntryIds(entries) {
+    const seen = new Map();
+    for (const entry of entries) {
+        const existing = seen.get(entry.id);
+        if (existing)
+            throw new Error(`Duplicate lockfile entry id: ${entry.id} (${existing}, ${entry.path})`);
+        seen.set(entry.id, entry.path);
+    }
 }
 //# sourceMappingURL=scan.js.map

@@ -1,4 +1,5 @@
 import type { RiskHint } from './types.js';
+import { compareStrings } from './stable.js';
 
 const PATTERNS: Array<{ code: string; level: RiskHint['level']; pattern: RegExp; message: string }> = [
   { code: 'PUBLIC_SIDE_EFFECT', level: 'high', pattern: /\b(post|publish|deploy|release|merge|tweet|send_message|comment)\b/i, message: 'Instruction appears to permit a public or external side effect.' },
@@ -17,7 +18,7 @@ export function inferRiskHints(text: string): RiskHint[] {
       hints.push({ level: item.level, code: item.code, message: item.message });
     }
   }
-  return hints.sort((a, b) => a.code.localeCompare(b.code));
+  return hints.sort((a, b) => compareStrings(a.code, b.code));
 }
 
 export function hintForSecretEnvNames(names: string[]): RiskHint[] {

@@ -1,0 +1,119 @@
+{
+  "entries": [
+    {
+      "capabilities": [],
+      "contentHash": "sha256:4bfa2cb6494e4ec1e2e4d7872f356668c481736aa898e04c00aa63022908fb85",
+      "id": "instructionfile:generic:.claude/skills/release-check.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 139
+      },
+      "name": ".claude/skills/release-check.md",
+      "path": ".claude/skills/release-check.md",
+      "platform": "generic",
+      "riskHints": [
+        {
+          "code": "PUBLIC_SIDE_EFFECT",
+          "level": "high",
+          "message": "Instruction appears to permit a public or external side effect."
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "contentHash": "sha256:c42d589871b065f1d30aebb52e11c4680f67aeb5eda49c08153226795a65c1ef",
+      "id": "instructionfile:generic:claude.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 252
+      },
+      "name": "CLAUDE.md",
+      "path": "CLAUDE.md",
+      "platform": "generic",
+      "riskHints": [
+        {
+          "code": "PUBLIC_SIDE_EFFECT",
+          "level": "high",
+          "message": "Instruction appears to permit a public or external side effect."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "npx",
+          "source": "mcp.command",
+          "type": "command"
+        },
+        {
+          "scope": ".",
+          "type": "filesystem"
+        }
+      ],
+      "contentHash": "sha256:dbf3f6f3baeab76499ec530278f2592c1822048e1b75b62956d9dc72a0860f9d",
+      "id": "mcpserver:mcp:filesystem-local",
+      "kind": "mcpServer",
+      "metadata": {
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "."
+        ],
+        "command": "npx",
+        "disabled": false,
+        "envNames": [],
+        "url": null
+      },
+      "name": "filesystem-local",
+      "path": ".claude/mcp.json",
+      "platform": "mcp",
+      "riskHints": [
+        {
+          "code": "FILESYSTEM_SCOPE_REPO",
+          "level": "high",
+          "message": "MCP server appears scoped to the repository root."
+        },
+        {
+          "code": "UNPINNED_REMOTE_EXEC",
+          "level": "high",
+          "message": "Configuration may execute an unpinned remote package or script."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "npx",
+          "source": "mcp.command",
+          "type": "command"
+        }
+      ],
+      "contentHash": "sha256:dbf3f6f3baeab76499ec530278f2592c1822048e1b75b62956d9dc72a0860f9d",
+      "id": "mcpserver:mcp:playwright-local",
+      "kind": "mcpServer",
+      "metadata": {
+        "args": [
+          "-y",
+          "@playwright/mcp@latest"
+        ],
+        "command": "npx",
+        "disabled": false,
+        "envNames": [],
+        "url": null
+      },
+      "name": "playwright-local",
+      "path": ".claude/mcp.json",
+      "platform": "mcp",
+      "riskHints": [
+        {
+          "code": "UNPINNED_REMOTE_EXEC",
+          "level": "high",
+          "message": "Configuration may execute an unpinned remote package or script."
+        }
+      ]
+    }
+  ],
+  "generatedBy": "agent-skill-lock@0.1.0",
+  "lockfileVersion": 1,
+  "root": "."
+}
