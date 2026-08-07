@@ -41,6 +41,49 @@ It is not:
 
 A locked dangerous skill is still dangerous. The lockfile only makes the change visible.
 
+## When to use it
+
+Use it when a repo has agent-facing files that reviewers can miss:
+
+- `AGENTS.md` or `CLAUDE.md`
+- `.claude/`, `.codex/`, or `.cursor/`
+- MCP server config
+- repo-local skills
+- tool permission files
+- CI workflows that depend on coding agents
+
+Do not use it as a substitute for sandboxing, secret scanning, package review, or normal code review.
+
+## 30-second demo
+
+The examples are committed as tiny repos. This gives you a clean pass, then a failing drift check:
+
+```bash
+pnpm install
+pnpm build
+node dist/cli.js check --root examples/claude-mcp-webapp
+printf "\nNew publishing instruction.\n" >> examples/claude-mcp-webapp/CLAUDE.md
+node dist/cli.js check --root examples/claude-mcp-webapp
+```
+
+The second check should fail because the current agent surface no longer matches `agent-skills.lock.json`.
+
+Reset the example after trying it:
+
+```bash
+git checkout -- examples/claude-mcp-webapp/CLAUDE.md
+```
+
+## Recommended PR workflow
+
+1. Change the agent config, skill, or MCP file.
+2. Run `agent-skill-lock update`.
+3. Review `agent-skills.lock.json` like a dependency lockfile.
+4. Commit the config change and lockfile together.
+5. Let CI block accidental drift.
+
+If the lockfile changes but the agent config diff is hard to understand, slow down. That is the point of the tool.
+
 ## What it watches
 
 | Surface | Paths |
@@ -246,11 +289,17 @@ The project uses strict TypeScript and Vitest. Parser changes should start with 
 
 ## Docs
 
+- [CLI reference](docs/cli.md)
+- [GitHub Action](docs/github-action.md)
+- [Lockfile format](docs/lockfile-format.md)
+- [Platform coverage](docs/platform-coverage.md)
+- [Architecture](docs/architecture.md)
 - [Examples](docs/examples.md)
 - [Threat model](docs/threat-model.md)
 - [Release process](docs/release.md)
-- [Positioning](docs/positioning.md)
 - [Roadmap](docs/roadmap.md)
+- [Positioning](docs/positioning.md)
+- [Support](SUPPORT.md)
 
 ## Status
 
