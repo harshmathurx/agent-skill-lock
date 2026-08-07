@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { makeEntryId } from './identity.js';
 import { parseFrontmatter, stringArray } from './frontmatter.js';
 import { hintForSecretEnvNames, inferRiskHints } from './risk.js';
+import { compareStrings } from './stable.js';
 import { redactArgs, redactUrl } from './redact.js';
 export function parseFile(file) {
     const rel = file.relativePath.replace(/\\/g, '/');
@@ -138,7 +139,7 @@ function normalizeEntry(entry) {
     return {
         ...entry,
         path: entry.path.replace(/\\/g, '/'),
-        capabilities: [...entry.capabilities].sort((a, b) => `${a.type}:${a.name ?? a.scope ?? ''}`.localeCompare(`${b.type}:${b.name ?? b.scope ?? ''}`)),
+        capabilities: [...entry.capabilities].sort((a, b) => compareStrings(`${a.type}:${a.name ?? a.scope ?? ''}`, `${b.type}:${b.name ?? b.scope ?? ''}`)),
         riskHints: dedupeRiskHints(entry.riskHints),
     };
 }
@@ -146,6 +147,6 @@ function dedupeRiskHints(hints) {
     const byCode = new Map();
     for (const hint of hints)
         byCode.set(hint.code, hint);
-    return [...byCode.values()].sort((a, b) => a.code.localeCompare(b.code));
+    return [...byCode.values()].sort((a, b) => compareStrings(a.code, b.code));
 }
 //# sourceMappingURL=adapters.js.map

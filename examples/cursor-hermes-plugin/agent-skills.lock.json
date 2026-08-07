@@ -1,0 +1,103 @@
+{
+  "entries": [
+    {
+      "capabilities": [],
+      "contentHash": "sha256:c990e428380810f265951f60eada10d291509a73d852d3d99dd2b1837729a144",
+      "id": "instructionfile:generic:.cursorrules",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 203
+      },
+      "name": ".cursorrules",
+      "path": ".cursorrules",
+      "platform": "generic",
+      "riskHints": [
+        {
+          "code": "PUBLIC_SIDE_EFFECT",
+          "level": "high",
+          "message": "Instruction appears to permit a public or external side effect."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "GITHUB_TOKEN",
+          "source": "mcp.env",
+          "type": "env"
+        }
+      ],
+      "contentHash": "sha256:4f38aa3e1c3a3cb3f1f26e997aa95ea2baf3d32ae76815ae2d55bd64cdef9679",
+      "id": "mcpserver:mcp:github-readonly",
+      "kind": "mcpServer",
+      "metadata": {
+        "args": [],
+        "command": null,
+        "disabled": false,
+        "envNames": [
+          "GITHUB_TOKEN"
+        ],
+        "url": "https://api.github.example.invalid/mcp?api_key=%3Credacted%3E"
+      },
+      "name": "github-readonly",
+      "path": ".cursor/mcp.json",
+      "platform": "mcp",
+      "riskHints": [
+        {
+          "code": "NETWORK_ACCESS",
+          "level": "medium",
+          "message": "Instruction references network access."
+        },
+        {
+          "code": "SECRET_ENV_REFERENCE",
+          "level": "medium",
+          "message": "MCP server references secret-looking environment variable names. Values are redacted."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "git",
+          "source": "required_commands",
+          "type": "command"
+        },
+        {
+          "name": "GITHUB_TOKEN",
+          "source": "required_environment_variables",
+          "type": "env"
+        }
+      ],
+      "contentHash": "sha256:2497593efb8cc80a4cf136b7e4112c7361c5af41bdf16caeab48170122ed8da1",
+      "id": "skill:hermes:release-notes",
+      "kind": "skill",
+      "metadata": {
+        "description": "Draft release notes for a plugin release.",
+        "requiredCommands": [
+          "git"
+        ],
+        "requiredEnv": [
+          "GITHUB_TOKEN"
+        ]
+      },
+      "name": "release-notes",
+      "path": ".hermes/skills/release-notes/SKILL.md",
+      "platform": "hermes",
+      "riskHints": [
+        {
+          "code": "PUBLIC_SIDE_EFFECT",
+          "level": "high",
+          "message": "Instruction appears to permit a public or external side effect."
+        },
+        {
+          "code": "SECRET_ENV_REFERENCE",
+          "level": "medium",
+          "message": "MCP server references secret-looking environment variable names. Values are redacted."
+        }
+      ]
+    }
+  ],
+  "generatedBy": "agent-skill-lock@0.1.0",
+  "lockfileVersion": 1,
+  "root": "."
+}

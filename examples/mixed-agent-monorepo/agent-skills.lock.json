@@ -1,0 +1,179 @@
+{
+  "entries": [
+    {
+      "capabilities": [],
+      "contentHash": "sha256:d8edaac73e049fcdf63eff35073bb16665c58288b0380a47e0408e138ce451b5",
+      "id": "instructionfile:generic:.cursor/rules/frontend.mdc",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 72
+      },
+      "name": ".cursor/rules/frontend.mdc",
+      "path": ".cursor/rules/frontend.mdc",
+      "platform": "generic",
+      "riskHints": []
+    },
+    {
+      "capabilities": [],
+      "contentHash": "sha256:63504812cd6c3898dd6110fc0c126fa93b0e4f5bf32d49760645b163b03b53f8",
+      "id": "instructionfile:generic:agents.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 128
+      },
+      "name": "AGENTS.md",
+      "path": "AGENTS.md",
+      "platform": "generic",
+      "riskHints": []
+    },
+    {
+      "capabilities": [],
+      "contentHash": "sha256:319425e1bdcb50403f5efa98a0177fef7a1d3620fa521a00e442cd45a2edd06d",
+      "id": "instructionfile:generic:claude.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 109
+      },
+      "name": "CLAUDE.md",
+      "path": "CLAUDE.md",
+      "platform": "generic",
+      "riskHints": [
+        {
+          "code": "PUBLIC_SIDE_EFFECT",
+          "level": "high",
+          "message": "Instruction appears to permit a public or external side effect."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "npx",
+          "source": "mcp.command",
+          "type": "command"
+        }
+      ],
+      "contentHash": "sha256:908ae096f9a8ffe896e8c6725b799c95dabf1a6b42cf1b2f5b8bc66f33551187",
+      "id": "mcpserver:mcp:docs-fetch",
+      "kind": "mcpServer",
+      "metadata": {
+        "args": [
+          "-y",
+          "mcp-remote",
+          "https://docs.example.invalid/mcp?token=<redacted>"
+        ],
+        "command": "npx",
+        "disabled": false,
+        "envNames": [],
+        "url": null
+      },
+      "name": "docs-fetch",
+      "path": "mcp.json",
+      "platform": "mcp",
+      "riskHints": [
+        {
+          "code": "NETWORK_ACCESS",
+          "level": "medium",
+          "message": "Instruction references network access."
+        },
+        {
+          "code": "UNPINNED_REMOTE_EXEC",
+          "level": "high",
+          "message": "Configuration may execute an unpinned remote package or script."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "npx",
+          "source": "mcp.command",
+          "type": "command"
+        },
+        {
+          "scope": ".",
+          "type": "filesystem"
+        }
+      ],
+      "contentHash": "sha256:908ae096f9a8ffe896e8c6725b799c95dabf1a6b42cf1b2f5b8bc66f33551187",
+      "id": "mcpserver:mcp:repo-files",
+      "kind": "mcpServer",
+      "metadata": {
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "."
+        ],
+        "command": "npx",
+        "disabled": false,
+        "envNames": [],
+        "url": null
+      },
+      "name": "repo-files",
+      "path": "mcp.json",
+      "platform": "mcp",
+      "riskHints": [
+        {
+          "code": "FILESYSTEM_SCOPE_REPO",
+          "level": "high",
+          "message": "MCP server appears scoped to the repository root."
+        },
+        {
+          "code": "UNPINNED_REMOTE_EXEC",
+          "level": "high",
+          "message": "Configuration may execute an unpinned remote package or script."
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "name": "git",
+          "source": "required_commands",
+          "type": "command"
+        },
+        {
+          "name": "pnpm",
+          "source": "required_commands",
+          "type": "command"
+        },
+        {
+          "name": "VERCEL_TOKEN",
+          "source": "required_environment_variables",
+          "type": "env"
+        }
+      ],
+      "contentHash": "sha256:c613fd19f4815cc6d73a96e0c4c299bc59b2604b94771400f96821905954b55a",
+      "id": "skill:hermes:deploy",
+      "kind": "skill",
+      "metadata": {
+        "description": "Prepare a deploy checklist for this monorepo.",
+        "requiredCommands": [
+          "git",
+          "pnpm"
+        ],
+        "requiredEnv": [
+          "VERCEL_TOKEN"
+        ]
+      },
+      "name": "deploy",
+      "path": ".hermes/skills/deploy/SKILL.md",
+      "platform": "hermes",
+      "riskHints": [
+        {
+          "code": "PUBLIC_SIDE_EFFECT",
+          "level": "high",
+          "message": "Instruction appears to permit a public or external side effect."
+        },
+        {
+          "code": "SECRET_ENV_REFERENCE",
+          "level": "medium",
+          "message": "MCP server references secret-looking environment variable names. Values are redacted."
+        }
+      ]
+    }
+  ],
+  "generatedBy": "agent-skill-lock@0.1.0",
+  "lockfileVersion": 1,
+  "root": "."
+}

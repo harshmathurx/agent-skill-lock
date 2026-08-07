@@ -1,3 +1,4 @@
+import { compareStrings } from './stable.js';
 const PATTERNS = [
     { code: 'PUBLIC_SIDE_EFFECT', level: 'high', pattern: /\b(post|publish|deploy|release|merge|tweet|send_message|comment)\b/i, message: 'Instruction appears to permit a public or external side effect.' },
     { code: 'UNPINNED_REMOTE_EXEC', level: 'high', pattern: /\b(npx\s+-y|uvx|curl\s+[^\n]*\|\s*(sh|bash))\b/i, message: 'Configuration may execute an unpinned remote package or script.' },
@@ -14,7 +15,7 @@ export function inferRiskHints(text) {
             hints.push({ level: item.level, code: item.code, message: item.message });
         }
     }
-    return hints.sort((a, b) => a.code.localeCompare(b.code));
+    return hints.sort((a, b) => compareStrings(a.code, b.code));
 }
 export function hintForSecretEnvNames(names) {
     return names.some((name) => /token|key|secret|password|passwd/i.test(name))

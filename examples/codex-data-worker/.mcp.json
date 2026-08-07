@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "readonly-postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "--readonly", "--token", "fake-example-token-do-not-use"],
+      "env": {
+        "DATABASE_URL": "postgres://example.invalid/reporting",
+        "READONLY_REPORTING_TOKEN": "fake-example-token-do-not-use"
+      }
+    }
+  }
+}
