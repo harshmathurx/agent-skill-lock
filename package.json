@@ -27,7 +27,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "commander": "^14.0.2",
+    "commander": "^15.0.0",
     "fast-glob": "^3.3.3",
     "yaml": "^2.8.1",
     "zod": "^4.1.13"
