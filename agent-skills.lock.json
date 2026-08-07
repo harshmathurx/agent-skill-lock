@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "capabilities": [],
+      "contentHash": "sha256:915be3936dbc95591d5d5cd375468f6f53adad4efe353e9a35084ffccd1fc302",
+      "id": "instructionfile:generic:agents.md",
+      "kind": "instructionFile",
+      "metadata": {
+        "bytes": 529
+      },
+      "name": "AGENTS.md",
+      "path": "AGENTS.md",
+      "platform": "generic",
+      "riskHints": []
+    }
+  ],
+  "generatedBy": "agent-skill-lock@0.1.0",
+  "lockfileVersion": 1,
+  "root": "."
+}

@@ -1,0 +1,48 @@
+name: Bug report
+description: Report incorrect drift detection, parser behavior, or CLI output.
+title: "bug: "
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior. Remove secrets from logs and config snippets.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Provide a minimal file tree/config and commands.
+      value: |
+        ```text
+        
+        ```
+        ```bash
+        
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: agent-skill-lock version
+      placeholder: 0.1.0
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - false positive
+        - false negative
+        - secret/path leakage
+        - crash
+        - unclear output
+        - other

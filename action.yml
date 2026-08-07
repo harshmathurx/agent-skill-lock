@@ -1,0 +1,18 @@
+name: Agent Skill Lock
+summary: Check repo-local agent skills, MCP servers, and tool permissions against a committed lockfile.
+description: Fails CI when the current agent capability surface does not match agent-skills.lock.json.
+author: Harsh Mathur
+branding:
+  icon: lock
+  color: red
+inputs:
+  root:
+    description: Repository root to scan.
+    required: false
+    default: .
+runs:
+  using: composite
+  steps:
+    - name: Check agent capability lock
+      shell: bash
+      run: node "$GITHUB_ACTION_PATH/dist/cli.js" check --root "${{ inputs.root }}"
